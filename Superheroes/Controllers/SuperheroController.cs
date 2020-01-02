@@ -9,16 +9,23 @@ namespace Superheroes.Controllers
 {
     public class SuperheroController : Controller
     {
+        ApplicationDbContext db;
+        public SuperheroController()
+        {
+            db = new ApplicationDbContext();
+        }
         // GET: Superhero
         public ActionResult Index()
         {
-            return View();
+            List<Superhero> hero = db.Superheroes.ToList();
+            return View(hero);
         }
 
         // GET: Superhero/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Superhero superhero = db.Superheroes.Where(s => s.Id == id).Select(s => s).SingleOrDefault();
+            return View(superhero);
         }
 
         // GET: Superhero/Create
@@ -34,8 +41,8 @@ namespace Superheroes.Controllers
         {
             try
             {
-                // TODO: Add insert logic here
-
+                db.Superheroes.Add(superhero);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
@@ -47,17 +54,24 @@ namespace Superheroes.Controllers
         // GET: Superhero/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Superhero superhero = db.Superheroes.Where(s => s.Id == id).Select(s => s).SingleOrDefault();
+            return View(superhero);
         }
 
         // POST: Superhero/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, Superhero superhero)
+        public ActionResult Edit(Superhero superhero)
         {
             try
             {
-                // TODO: Add update logic here
-
+                Superhero newSupe = db.Superheroes.Where(s => s.Id == superhero.Id).Select(s => s).SingleOrDefault();
+                newSupe.FirstName = superhero.FirstName;
+                newSupe.LastName = superhero.LastName;
+                newSupe.AlterEgo = superhero.AlterEgo;
+                newSupe.Ability = superhero.Ability;
+                newSupe.SecondaryAbility = superhero.SecondaryAbility;
+                newSupe.Catchphrase = superhero.Catchphrase;
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
@@ -69,17 +83,19 @@ namespace Superheroes.Controllers
         // GET: Superhero/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            Superhero superhero = db.Superheroes.Where(s => s.Id == id).Select(s => s).SingleOrDefault();
+            return View(superhero);
         }
 
         // POST: Superhero/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, Superhero superhero)
+        public ActionResult Delete(Superhero superhero)
         {
             try
             {
-                // TODO: Add delete logic here
-
+                Superhero newSupe = db.Superheroes.Where(s => s.Id == superhero.Id).Select(s => s).SingleOrDefault();
+                db.Superheroes.Remove(newSupe);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
